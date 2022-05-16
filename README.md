@@ -1,3 +1,36 @@
+# Run the project
+
+For the frontend, in the terminal run:
+
+```
+npm start
+```
+For the backend, in a new terminal:
+
+```
+cd ./back
+npm start
+```
+
+# Database connection
+
+In the `back` directory
+
+```
+cd ./back
+```
+Create a dotenv environment variables file (.env)
+
+```
+touch .env
+```
+Add a `DATABASE_ACCESS` with your connection string, for example:
+
+```
+DATABASE_ACCESS = "mongodb+srv://<username>:<password>@cluster0.uigzg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+
+```
+
 # Picshar
 
 Desarrollen el backend para un clon de Twitter + Instagram.
