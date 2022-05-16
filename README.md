@@ -27,7 +27,7 @@ touch .env
 Add a `DATABASE_ACCESS` with your connection string, for example:
 
 ```
-DATABASE_ACCESS = "mongodb+srv://<username>:<password>@cluster0.uigzg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+DATABASE_ACCESS = "mongodb+srv://<username>:<password>@cluster0.uigzg.mongodb.net/picsharapp?retryWrites=true&w=majority"
 
 ```
 
