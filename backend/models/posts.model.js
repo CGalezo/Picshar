@@ -1,3 +1,12 @@
+/*
+  Model for a Post inside PicShar
+  A post contains:
+  - img_url: A string. Usually a url to an image.
+  - bio: A string. the caption for the post
+  - author: A user id. The author of the post
+  - created_at: A Date object. The date the post was created.
+  - comments: An array of comment ids for which the post has been commented on.
+*/
 const { Schema, model } = require('mongoose');
 
 const postSchema = new Schema({

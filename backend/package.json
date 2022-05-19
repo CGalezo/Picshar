@@ -4,7 +4,10 @@
   "description": "API",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "migrate": "npm run migrate:delete && npm run migrate:create",
+    "migrate:delete": "node ./migrations/delete_all.migration.js",
+    "migrate:create": "node ./migrations/create_all.migration.js"
   },
   "author": "Camilo Galezo",
   "license": "ISC",
