@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "API",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "nodemon server.js",
     "migrate": "npm run migrate:delete && npm run migrate:create",
@@ -11,7 +12,7 @@
     "migrate:create_users": "node ./migrations/create_users.migration.js",
     "migrate:create_posts": "node ./migrations/create_posts.migration.js"
   },
-  "author": "Camilo Galezo",
+  "author": "Camilo Galezo, José Maza, Julián Espitaleta",
   "license": "ISC",
   "dependencies": {
     "@faker-js/faker": "^7.0.1",
