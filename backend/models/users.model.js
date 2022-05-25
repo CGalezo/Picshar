@@ -34,12 +34,11 @@ const userSchema = new Schema({
   },
   bio: {
     type: String,
-    required: true,
+    default: '',
     trim: true,
   },
   public_likes: {
     type: Boolean,
-    required: true,
     default: true,
   },
   saved_posts: {

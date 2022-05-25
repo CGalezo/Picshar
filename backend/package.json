@@ -6,15 +6,19 @@
   "scripts": {
     "start": "nodemon server.js",
     "migrate": "npm run migrate:delete && npm run migrate:create",
-    "migrate:delete": "node ./migrations/delete_all.migration.js",
-    "migrate:create": "node ./migrations/create_all.migration.js"
+    "migrate:delete_all": "node ./migrations/delete_all.migration.js",
+    "migrate:create_all": "node ./migrations/create_users.migration.js && node ./migrations/create_posts.migration.js",
+    "migrate:create_users": "node ./migrations/create_users.migration.js",
+    "migrate:create_posts": "node ./migrations/create_posts.migration.js"
   },
   "author": "Camilo Galezo",
   "license": "ISC",
   "dependencies": {
+    "@faker-js/faker": "^7.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "faker": "^6.6.6",
     "mongoose": "^6.3.3",
     "nodemon": "^2.0.16"
   }
