@@ -1,15 +1,15 @@
-import express  from 'express'
+const express = require('express')
 const app = express()
-import mongoose from 'mongoose'
-import dotenv from 'dotenv'
-import cors from 'cors'
+const mongoose = require('mongoose')
+const dotenv = require('dotenv')
+const cors = require('cors')
 
 // Routes
-import  exampleUrls from './routes/route.js' // Import the example routes, delete this when first issue resolved 
+const exampleUrls = require('./routes/route') // Import the example routes, delete this when first issue resolved 
 
 dotenv.config()
 
-mongoose.connect(process.env.DATABASE_ACCESS, ()=>{console.log("Database connected")}) // Database connection
+mongoose.connect(process.env.DATABASE_ACCESS, ()=>console.log("Database connected")) // Database connection
 
 app.use(express.json())
 app.use(cors())

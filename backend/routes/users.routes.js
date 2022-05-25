@@ -1,5 +1,5 @@
-import express from 'express'
+const express = require('express');
 const router = express.Router();
-//import controller from '../controllers/user.controller'
+//const controller = require('../controllers/user.controller');
 
-export default router
+module.exports = router;
