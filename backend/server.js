@@ -1,19 +1,20 @@
-const express = require('express')
-const app = express()
-const mongoose = require('mongoose')
-const dotenv = require('dotenv')
-const cors = require('cors')
+const express = require('express');
+const app = express();
+const { connectDB, disconnectDB } = require('./configs/db.config');
+const dotenv = require('dotenv');
+const cors = require('cors');
 
-// Routes
-const exampleUrls = require('./routes/route') // Import the example routes, delete this when first issue resolved 
+dotenv.config();
 
-dotenv.config()
+connectDB();
 
-mongoose.connect(process.env.DATABASE_ACCESS, ()=>console.log("Database connected")) // Database connection
+app.use(express.json());
+app.use(cors());
 
-app.use(express.json())
-app.use(cors())
+// Import routers
+const usersRouter = require('./routes/users.routes');
 
-app.use('/app', exampleUrls)
+// Use routers
+app.use('/users', usersRouter);
 
-app.listen(4000, () => console.log("Server is up and running"))
+app.listen(4000, () => console.log('Server is up and running'));
