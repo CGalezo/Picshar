@@ -7,9 +7,10 @@
     "start": "nodemon server.js",
     "migrate": "npm run migrate:delete && npm run migrate:create",
     "migrate:delete_all": "node ./migrations/delete_all.migration.js",
-    "migrate:create_all": "node ./migrations/create_users.migration.js && node ./migrations/create_posts.migration.js",
+    "migrate:create_all": "node ./migrations/create_users.migration.js && node ./migrations/create_posts.migration.js && node ./migrations/create_relationships.migration.js",
     "migrate:create_users": "node ./migrations/create_users.migration.js",
-    "migrate:create_posts": "node ./migrations/create_posts.migration.js"
+    "migrate:create_posts": "node ./migrations/create_posts.migration.js",
+    "migrate:create_relations": "node ./migrations/create_relationships.migration.js"
   },
   "author": "Camilo Galezo, José Maza, Julián Espitaleta",
   "license": "ISC",
@@ -19,6 +20,7 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "faker": "^6.6.6",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.3",
     "nodemon": "^2.0.16"
   }
