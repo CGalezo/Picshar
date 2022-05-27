@@ -8,7 +8,7 @@ dotenv.config();
 connectDB()
   .then(async () => {
     try {
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 150; i++) {
         let user = await createRandomUser();
         console.log('Generated user: ', user.username);
       }

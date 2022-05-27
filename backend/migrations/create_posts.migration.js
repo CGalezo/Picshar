@@ -9,7 +9,7 @@ dotenv.config();
 connectDB()
   .then(async () => {
     try {
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 200; i++) {
         let user = await User.aggregate([{ $sample: { size: 1 } }]);
         user = user[0];
         let post = new Post({
@@ -20,7 +20,7 @@ connectDB()
         });
         await post.save();
         await User.findOneAndUpdate({ _id: user._id }, { $push: { posts: post._id } });
-        console.log('Generated post: ', post.img_url);
+        console.log('Generated post: ', post.img_url, 'for user', user.username);
       }
     } catch (err) {
       console.error(err.message);

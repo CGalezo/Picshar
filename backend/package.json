@@ -7,9 +7,10 @@
     "start": "nodemon server.js",
     "migrate": "npm run migrate:delete && npm run migrate:create",
     "migrate:delete_all": "node ./migrations/delete_all.migration.js",
-    "migrate:create_all": "node ./migrations/create_users.migration.js && node ./migrations/create_posts.migration.js",
+    "migrate:create_all": "node ./migrations/create_users.migration.js && node ./migrations/create_posts.migration.js && node ./migrations/create_relationships.migration.js",
     "migrate:create_users": "node ./migrations/create_users.migration.js",
-    "migrate:create_posts": "node ./migrations/create_posts.migration.js"
+    "migrate:create_posts": "node ./migrations/create_posts.migration.js",
+    "migrate:create_relations": "node ./migrations/create_relationships.migration.js"
   },
   "author": "Camilo Galezo",
   "license": "ISC",
