@@ -1,5 +1,5 @@
 const User = require('../models/users.model');
-const JWT = require('jsonwebtoken');
+const Tokenizer = require('../utils/token.util');
 
 const registerUser = async (req, res) => {
   const { username, password, email, birthdate, bio } = req.body;
@@ -37,7 +37,7 @@ const registerUser = async (req, res) => {
     }
     return res.status(201).json({
       message: 'User created',
-      token: JWT.sign({ id: newUser._id, email: newUser.email }, process.env.SECRET_KEY),
+      token: Tokenizer.tokenFromUser(user),
     });
   });
 };
