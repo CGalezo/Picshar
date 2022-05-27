@@ -67,6 +67,10 @@ const getUser = async (req, res) => {
         email: user.email,
         birthdate: user.birthdate,
         bio: user.bio,
+        follow_count: user.follows.length,
+        follower_count: user.followers.length,
+        post_count: user.posts.length,
+        liked_post_count: user.liked_posts.length,
       });
     });
   }
