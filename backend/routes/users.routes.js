@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const controller = require("../controllers/users.controller");
 
+
 router.post("/", controller.registerUser);
 
 router.post("/login", (req, res) => {
@@ -25,5 +26,6 @@ const verifytoken = (req, res, next) => {
     res.sendStatus(403);
   }
 };
+
 
 module.exports = router;
