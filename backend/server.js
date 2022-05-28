@@ -17,4 +17,5 @@ const usersRouter = require('./routes/users.routes');
 // Use routers
 app.use('/users', usersRouter);
 
+
 app.listen(4000, () => console.log('Server is up and running'));
