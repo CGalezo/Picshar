@@ -5,8 +5,12 @@ const tokenFromUser = (user) => {
 };
 
 const userIdFromToken = (token) => {
-  const decoded = JWT.verify(token, process.env.SECRET_KEY);
-  return decoded.id;
+  try {
+    const decoded = JWT.verify(token, process.env.SECRET_KEY);
+    return decoded.id;
+  } catch (err) {
+    return null;
+  }
 };
 
 module.exports = { tokenFromUser, userIdFromToken };
