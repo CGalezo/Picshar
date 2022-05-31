@@ -19,4 +19,5 @@ const postsRouter = require('./routes/posts.routes');
 app.use('/users', usersRouter);
 app.use('/posts', postsRouter);
 
+
 app.listen(4000, () => console.log('Server is up and running'));

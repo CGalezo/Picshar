@@ -9,7 +9,7 @@ const getPostsByUser = async (req, res) => {
 
   if (!token) {
     return res.status(401).json({
-      message: 'Please provide a token',
+      message: "Please provide a token",
     });
   }
   const user_id = Tokenizer.userIdFromToken(token);
@@ -41,6 +41,30 @@ const getPostsByUser = async (req, res) => {
   });
 };
 
+
+const createNewPost = async (req, res) => {
+  const token =
+    req.headers["x-access-token"] || req.query.token || req.body.token;
+  const { img_url, bio, author } = req.body;
+  const newPost = new Post({
+    img_url,
+    bio,
+    author,
+    created_at: Date.now(),
+    comments: [],
+  });
+  await newPost.save((err, post) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Error saving post",
+      });
+    }
+    return res.status(201).json({
+      message: "Post created",
+      post,
+    });
+  });
+};
 const getPostsLikedByUser = async (req, res) => {
   const token = req.headers['x-access-token'] || req.query.token || req.body.token;
   const { author } = req.query;
@@ -125,8 +149,11 @@ const getPostsSavedByUser = async (req, res) => {
     return res.status(200).json({
       message: 'Saved Posts retrieved',
       posts,
+
     });
   });
 };
 
-module.exports = { getPostsByUser, getPostsLikedByUser, getPostsSavedByUser };
+
+module.exports = { getPostsByUser, createNewPost };
+
