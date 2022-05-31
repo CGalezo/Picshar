@@ -1,5 +1,9 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+
+const express = require('express');
+const Tokenizer = require('../utils/token.util');
+
 const router = express.Router();
 const controller = require("../controllers/users.controller");
 
@@ -26,6 +30,11 @@ const verifytoken = (req, res, next) => {
     res.sendStatus(403);
   }
 };
+
+
+router.post('/', controller.registerUser);
+
+router.post('/login', controller.loginUser);
 
 
 module.exports = router;

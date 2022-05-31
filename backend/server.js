@@ -13,9 +13,11 @@ app.use(cors());
 
 // Import routers
 const usersRouter = require('./routes/users.routes');
+const postsRouter = require('./routes/posts.routes');
 
 // Use routers
 app.use('/users', usersRouter);
+app.use('/posts', postsRouter);
 
 
 app.listen(4000, () => console.log('Server is up and running'));
