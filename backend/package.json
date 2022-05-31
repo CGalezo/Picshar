@@ -12,7 +12,7 @@
     "migrate:create_posts": "node ./migrations/create_posts.migration.js",
     "migrate:create_relations": "node ./migrations/create_relationships.migration.js"
   },
-  "author": "Camilo Galezo",
+  "author": "Camilo Galezo, José Maza, Julián Espitaleta",
   "license": "ISC",
   "dependencies": {
     "@faker-js/faker": "^7.0.1",
