@@ -76,4 +76,49 @@ const getUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, getUser };
+const loginUser = async (req, res) => {
+  const token = req.headers['x-access-token'] || req.query.token || req.body.token;
+  if (token) {
+    const user_id = Tokenizer.userIdFromToken(token);
+    if (user_id) {
+      return res.status(200).json({
+        message: 'User already logged in',
+        token,
+      });
+    } else {
+      return res.status(401).json({
+        message: 'Invalid token',
+      });
+    }
+  }
+
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({
+      message: 'Please fill in all necessary fields',
+    });
+  }
+  User.findOne({ username }, (err, user) => {
+    if (err) {
+      return res.status(500).json({
+        message: 'Error checking if user exists',
+      });
+    }
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found',
+      });
+    }
+    if (user.password !== password) {
+      return res.status(401).json({
+        message: 'Invalid password',
+      });
+    }
+    return res.status(200).json({
+      message: 'User logged in',
+      token: Tokenizer.tokenFromUser(user),
+    });
+  });
+};
+
+module.exports = { registerUser, getUser, loginUser };
