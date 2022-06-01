@@ -47,13 +47,19 @@ const registerUser = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  const { id } = req.query;
-  if (!id) {
+  const token = req.headers['x-access-token'] || req.query.token || req.body.token;
+  if (!token) {
+    return res.status(401).json({
+      message: 'No token provided, you must be logged in to view this user',
+    });
+  }
+  const { user_id } = req.query;
+  if (!user_id) {
     return res.status(400).json({
-      message: 'Please provide an id',
+      message: 'Please provide an id to get a user',
     });
   } else {
-    User.findById(id, (err, user) => {
+    User.findById(user_id, (err, user) => {
       if (err) {
         return res.status(500).json({
           message: 'Error getting user',
@@ -69,7 +75,6 @@ const getUser = async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        birthdate: user.birthdate,
         bio: user.bio,
         follow_count: user.follows.length,
         follower_count: user.followers.length,
@@ -177,7 +182,6 @@ const getFollowers = async (req, res) => {
           follow_count: user.follows.length,
           follower_count: user.followers.length,
           post_count: user.posts.length,
-          liked_post_count: user.liked_posts.length,
         })),
       });
     });
