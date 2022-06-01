@@ -36,9 +36,17 @@ beforeAll(async () => {
     bio: 'test post bio',
     author: GLOBAL_TEST_USER._id,
   });
+  const post3 = new Post({
+    img_url: 'test url 3',
+    bio: 'test post bio',
+    author: GLOBAL_TEST_USER_2._id,
+  });
   // Add posts to user
   GLOBAL_TEST_USER.posts.push(post1);
   GLOBAL_TEST_USER.posts.push(post2);
+
+  //User 1 likes post 3
+  GLOBAL_TEST_USER.liked_posts.push(post3);
 
   // make users follow eachother
   GLOBAL_TEST_USER.follows.push(GLOBAL_TEST_USER_2._id);
@@ -142,6 +150,7 @@ describe('User Profile testing', () => {
     expect(response2.body.post_count).toBe(2);
     expect(response2.body.follow_count).toBe(1);
     expect(response2.body.follower_count).toBe(1);
+    expect(response2.body.liked_post_count).toBe(1);
     expect(response2.body.birthdate).toBeUndefined();
   });
 });
