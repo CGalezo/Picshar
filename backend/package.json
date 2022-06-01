@@ -10,7 +10,9 @@
     "migrate:create_all": "node ./migrations/create_users.migration.js && node ./migrations/create_posts.migration.js && node ./migrations/create_relationships.migration.js",
     "migrate:create_users": "node ./migrations/create_users.migration.js",
     "migrate:create_posts": "node ./migrations/create_posts.migration.js",
-    "migrate:create_relations": "node ./migrations/create_relationships.migration.js"
+    "migrate:create_relations": "node ./migrations/create_relationships.migration.js",
+    "test": "cross-env NODE_ENV=test jest --config=./configs/jest.config.js",
+    "pretest": "cross-env NODE_ENV=test npm run migrate:delete_all"
   },
   "author": "Camilo Galezo, José Maza, Julián Espitaleta",
   "license": "ISC",
@@ -23,5 +25,10 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.3",
     "nodemon": "^2.0.16"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "jest": "^28.1.0",
+    "supertest": "^6.2.3"
   }
 }

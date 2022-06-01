@@ -6,7 +6,7 @@ const Comment = require('../models/comments.model');
 const FollowRequest = require('../models/followRequest.model');
 
 // connect to database
-dotenv.config();
+dotenv.config({ path: `.env${process.env.NODE_ENV === 'test' ? '.test' : ''}` });
 connectDB()
   .then(async () => {
     try {
