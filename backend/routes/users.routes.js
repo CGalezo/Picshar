@@ -5,8 +5,8 @@ const Tokenizer = require('../utils/token.util');
 const router = express.Router();
 const controller = require('../controllers/users.controller');
 
+router.get('/', controller.getUser);
 router.post('/', controller.registerUser);
-
 router.post('/login', controller.loginUser);
 
 module.exports = router;
