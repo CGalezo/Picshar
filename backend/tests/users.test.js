@@ -85,6 +85,15 @@ describe('User Registration testing', () => {
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('User already exists');
   });
+
+  it('Should fail gracefully when info provided is not sufficient', async () => {
+    const response = await request(app).post('/users/').send({
+      username: 'testUser2',
+      password: 'testPassword',
+    });
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('Please fill in all necessary fields');
+  });
 });
 
 afterAll(async () => {
