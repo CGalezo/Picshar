@@ -1,14 +1,12 @@
-const express = require("express");
-const jwt = require("jsonwebtoken");
+const express = require('express');
+const jwt = require('jsonwebtoken');
 const Tokenizer = require('../utils/token.util');
 
 const router = express.Router();
-const controller = require("../controllers/users.controller");
+const controller = require('../controllers/users.controller');
 
-
-router.post("/", controller.registerUser);
+router.post('/', controller.registerUser);
 
 router.post('/login', controller.loginUser);
-
 
 module.exports = router;
