@@ -1,6 +1,8 @@
 const express = require('express');
 const UserRoutes = require('../routes/users.routes');
 const User = require('../models/users.model');
+const Post = require('../models/posts.model');
+const Tokenizer = require('../utils/token.util');
 const request = require('supertest');
 const { connectDB, disconnectDB } = require('../configs/db.config');
 
@@ -10,14 +12,41 @@ app.use('/users', UserRoutes);
 
 beforeAll(async () => {
   await connectDB();
-  const user = new User({
+  const GLOBAL_TEST_USER = new User({
     username: 'testUser',
     password: 'testPassword',
     birthdate: new Date(),
     bio: 'test bio',
     email: 'testmail@gmail.com',
   });
-  await user.save();
+  const GLOBAL_TEST_USER_2 = new User({
+    username: 'testUser2',
+    password: 'testPassword',
+    birthdate: new Date(),
+    bio: 'test bio',
+    email: 'testmail2@gmail.com',
+  });
+  const post1 = new Post({
+    img_url: 'test url',
+    bio: 'test post bio',
+    author: GLOBAL_TEST_USER._id,
+  });
+  const post2 = new Post({
+    img_url: 'test url 2',
+    bio: 'test post bio',
+    author: GLOBAL_TEST_USER._id,
+  });
+  // Add posts to user
+  GLOBAL_TEST_USER.posts.push(post1);
+  GLOBAL_TEST_USER.posts.push(post2);
+
+  // make users follow eachother
+  GLOBAL_TEST_USER.follows.push(GLOBAL_TEST_USER_2._id);
+  GLOBAL_TEST_USER.followers.push(GLOBAL_TEST_USER_2._id);
+  GLOBAL_TEST_USER_2.follows.push(GLOBAL_TEST_USER._id);
+  GLOBAL_TEST_USER_2.followers.push(GLOBAL_TEST_USER._id);
+
+  Promise.all([GLOBAL_TEST_USER.save(), GLOBAL_TEST_USER_2.save(), post1.save(), post2.save()]);
 });
 
 describe('User Login Testing', () => {
@@ -32,7 +61,7 @@ describe('User Login Testing', () => {
 
   it('Should fail gracefully when user does not exist', async () => {
     const response = await request(app).post('/users/login').send({
-      username: 'testUser2',
+      username: 'testUser3',
       password: 'testPassword',
     });
     expect(response.status).toBe(404);
@@ -63,11 +92,11 @@ describe('User Login Testing', () => {
 describe('User Registration testing', () => {
   it('Should properly register a user with valid info', async () => {
     const response = await request(app).post('/users/').send({
-      username: 'testUser2',
+      username: 'testUser4',
       password: 'testPassword',
-      email: 'email2@mail.com',
+      email: 'email3@mail.com',
       birthdate: new Date(),
-      bio: 'test bio 2',
+      bio: 'test bio 3',
     });
     expect(response.status).toBe(201);
     expect(response.body.message).toBe('User created');
@@ -93,6 +122,27 @@ describe('User Registration testing', () => {
     });
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('Please fill in all necessary fields');
+  });
+});
+
+describe('User Profile testing', () => {
+  it("Should properly fetch an user's information", async () => {
+    // login as testUser
+    const response = await request(app).post('/users/login').send({
+      username: 'testUser',
+      password: 'testPassword',
+    });
+    const token = response.body.token;
+    const id = Tokenizer.userIdFromToken(token);
+    const response2 = await request(app).get(`/users?user_id=${id}`).set('x-access-token', token);
+    expect(response2.status).toBe(200);
+    expect(response2.body.username).toBe('testUser');
+    expect(response2.body.email).toBe('testmail@gmail.com');
+    expect(response2.body.bio).toBe('test bio');
+    expect(response2.body.post_count).toBe(2);
+    expect(response2.body.follow_count).toBe(1);
+    expect(response2.body.follower_count).toBe(1);
+    expect(response2.body.birthdate).toBeUndefined();
   });
 });
 
