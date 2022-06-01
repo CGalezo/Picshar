@@ -9,18 +9,21 @@ const registerUser = async (req, res) => {
     });
   }
   // Check if user already exists
-  User.findOne({ username }, (err, user) => {
-    if (err) {
-      return res.status(500).json({
-        message: 'Error checking if user exists',
-      });
-    }
-    if (user) {
-      return res.status(400).json({
-        message: 'User already exists',
-      });
-    }
+  const user = await User.findOne({
+    $or: [
+      {
+        username,
+      },
+      {
+        email,
+      },
+    ],
   });
+  if (user) {
+    return res.status(400).json({
+      message: 'User already exists',
+    });
+  }
   // create user
   const newUser = new User({
     username,
@@ -29,16 +32,17 @@ const registerUser = async (req, res) => {
     birthdate: new Date(birthdate),
     bio,
   });
-  await newUser.save((err, user) => {
+  newUser.save((err, user) => {
     if (err) {
       return res.status(500).json({
         message: 'Error saving user',
       });
+    } else {
+      return res.status(201).json({
+        message: 'User created',
+        token: Tokenizer.tokenFromUser(user),
+      });
     }
-    return res.status(201).json({
-      message: 'User created',
-      token: Tokenizer.tokenFromUser(user),
-    });
   });
 };
 
@@ -91,7 +95,6 @@ const loginUser = async (req, res) => {
       });
     }
   }
-
   const { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).json({
