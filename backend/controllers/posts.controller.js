@@ -46,24 +46,45 @@ const createNewPost = async (req, res) => {
   const token =
     req.headers["x-access-token"] || req.query.token || req.body.token;
   const { img_url, bio, author } = req.body;
-  const newPost = new Post({
-    img_url,
-    bio,
-    author,
-    created_at: Date.now(),
-    comments: [],
-  });
-  await newPost.save((err, post) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Error saving post",
-      });
-    }
-    return res.status(201).json({
-      message: "Post created",
-      post,
+  if (!token) {
+    return res.status(401).json({
+      message: "Please provide a token",
     });
-  });
+  }
+  const user_id = Tokenizer.userIdFromToken(token);
+  if (!user_id) {
+    return res.status(401).json({
+      message: "Invalid token",
+    });
+  }
+  if (author !== user_id) {
+    return res.status(401).json({
+      message: "You are not authorized to create a post for this author",
+    });
+  }
+  const user = await User.findById(user_id);
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  } else {
+    const post = new Post({
+      img_url,
+      bio,
+      author: user_id, // user_id is the author of the post
+    });
+    post.save((err, post) => {
+      if (err) {
+        return res.status(500).json({
+          message: "Error creating post",
+        });
+      }
+      return res.status(201).json({
+        message: "Post created",
+        post,
+      });
+    });
+  }
 };
 
 const getPostsLikedByUser = async (req, res) => {
@@ -156,4 +177,9 @@ const getPostsSavedByUser = async (req, res) => {
   });
 };
 
-module.exports = { getPostsByUser, createNewPost, getPostsLikedByUser, getPostsSavedByUser };
+module.exports = {
+  getPostsByUser,
+  createNewPost,
+  getPostsLikedByUser,
+  getPostsSavedByUser,
+};
