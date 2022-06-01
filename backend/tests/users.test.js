@@ -20,7 +20,7 @@ beforeAll(async () => {
   await user.save();
 });
 
-describe('User Routes Testing', () => {
+describe('User Login Testing', () => {
   it('Should properly get a token after logging in', async () => {
     const response = await request(app).post('/users/login').send({
       username: 'testUser',
