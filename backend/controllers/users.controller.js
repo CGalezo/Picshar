@@ -72,7 +72,7 @@ const getUser = async (req, res) => {
       }
       return res.status(200).json({
         message: 'User found',
-        id: user._id,
+        id: user._id.toString(),
         username: user.username,
         email: user.email,
         bio: user.bio,
@@ -137,7 +137,6 @@ const getFollowers = async (req, res) => {
     });
   }
   const requester_id = Tokenizer.userIdFromToken(token);
-  console.log(requester_id);
   if (!requester_id) {
     return res.status(401).json({
       message: 'Invalid token',
@@ -160,7 +159,7 @@ const getFollowers = async (req, res) => {
         message: 'User not found',
       });
     }
-    if (user.followers.indexOf(requester_id) === -1) {
+    if (user.followers.indexOf(requester_id) === -1 && user._id.toString() !== requester_id) {
       return res.status(401).json({
         message: "Not following, you're not authorized to see this user's followers",
       });
