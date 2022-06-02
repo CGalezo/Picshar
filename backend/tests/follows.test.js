@@ -14,7 +14,6 @@ app.use('/users', UserRoutes);
 app.use('/follows', FollowRoutes);
 
 beforeAll(async () => {
-  jest.setTimeout(10000);
   await connectDB();
   const GLOBAL_TEST_USER = new User({
     username: 'testUser10',
@@ -111,7 +110,6 @@ describe('Follows Testing', () => {
     });
     const user10Id = Tokenizer.userIdFromToken(response2.body.token);
     const { token } = rsponse.body;
-    console.log(rsponse.body);
     const id = Tokenizer.userIdFromToken(token);
     const rsp2 = await request(app)
       .get(`/follows/followers?id=${user10Id}`)
@@ -133,6 +131,57 @@ describe('Follows Testing', () => {
     expect(rsp2.status).toBe(200);
     expect(rsp2.body.follows.length).toBe(1);
     expect(rsp2.body.follows[0].username).toBe('testUser20');
+  });
+});
+
+describe('Follow request Testing', () => {
+  it('Should successfully create a follow request', async () => {
+    const rsponse = await request(app).post('/users/login').send({
+      username: 'testUser10',
+      password: 'testPassword',
+    });
+    const token = rsponse.body.token;
+    const response2 = await request(app).post('/users/login').send({
+      username: 'testUser30',
+      password: 'testPassword',
+    });
+    const id = Tokenizer.userIdFromToken(response2.body.token);
+    const rsp2 = await request(app).post(`/follows/request`).set('x-access-token', token).send({
+      user_id: id,
+    });
+    expect(rsp2.status).toBe(200);
+    expect(rsp2.body.message).toBe('Follow request sent');
+  });
+
+  it('Should fail gracefully when following yourself', async () => {
+    const rsponse = await request(app).post('/users/login').send({
+      username: 'testUser10',
+      password: 'testPassword',
+    });
+    const token = rsponse.body.token;
+    const id = Tokenizer.userIdFromToken(token);
+    const rsp2 = await request(app).post(`/follows/request`).set('x-access-token', token).send({
+      user_id: id,
+    });
+    expect(rsp2.status).toBe(401);
+  });
+
+  it('Should fail gracefully when creating a FR for someone you follow', async () => {
+    const rsponse = await request(app).post('/users/login').send({
+      username: 'testUser10',
+      password: 'testPassword',
+    });
+    const response2 = await request(app).post('/users/login').send({
+      username: 'testUser20',
+      password: 'testPassword',
+    });
+    const token = rsponse.body.token;
+    const id = Tokenizer.userIdFromToken(response2.body.token);
+    const rsp2 = await request(app).post(`/follows/request`).set('x-access-token', token).send({
+      user_id: id,
+    });
+    expect(rsp2.status).toBe(401);
+    expect(rsp2.body.message).toBe('You are already following this user');
   });
 });
 
