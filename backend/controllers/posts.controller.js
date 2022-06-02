@@ -177,9 +177,43 @@ const getPostsSavedByUser = async (req, res) => {
   });
 };
 
+const getPostById = async (req, res) => {
+  const token =
+    req.headers["x-access-token"] || req.query.token || req.body.token;
+
+  if (!token) {
+    return res.status(401).json({
+      message: "Please provide a token",
+    });
+  }
+  const user_id = Tokenizer.userIdFromToken(token);
+  if (!user_id) {
+    return res.status(401).json({
+      message: "Invalid token",
+    });
+  }
+  const { post_id } = req.body;
+  const post = await Post.findById(post_id);
+  if (!post) {
+    return res.status(404).json({
+      message: "Post not found",
+    });
+  }
+  const [img_url, bio, author] = [post.img_url, post.bio, post.author];
+  const likes = await User.find({liked_posts: { $in: [post_id] }},"username");
+  return res.status(200).json({
+    message: "Post retrieved",
+    img_url,
+    bio,
+    author,
+    likes,
+    comment : post.comments,
+  });
+};
 module.exports = {
   getPostsByUser,
   createNewPost,
   getPostsLikedByUser,
   getPostsSavedByUser,
+  getPostById,
 };
