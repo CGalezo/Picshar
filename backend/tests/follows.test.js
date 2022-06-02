@@ -185,4 +185,35 @@ describe('Follow request Testing', () => {
   });
 });
 
-afterAll(async () => {});
+describe('Follow Request handling Testing', () => {
+  it('Should successfully accept a follow request', async () => {
+    const GLOBAL_TEST_USER_4 = new User({
+      username: 'testUser40',
+      password: 'testPassword',
+      birthdate: new Date(),
+      bio: 'test bio 40',
+      email: 'testmail40@gmail.com',
+    });
+    await GLOBAL_TEST_USER_4.save();
+
+    const rsponse = await request(app).post('/users/login').send({
+      username: 'testUser10',
+      password: 'testPassword',
+    });
+    const token = rsponse.body.token;
+    const id = Tokenizer.userIdFromToken(rsponse.body.token);
+    const fr = new FollowRequest({
+      requester: GLOBAL_TEST_USER_4._id,
+      requestee: id,
+    });
+    await fr.save();
+    const rsp3 = await request(app).post(`/follows/response`).set('x-access-token', token).send({
+      request_id: fr._id.toString(),
+      action: 'accept',
+    });
+    expect(rsp3.status).toBe(200);
+    expect(rsp3.body.message).toBe('Follow request accepted');
+  });
+});
+
+afterEach(async () => {});
