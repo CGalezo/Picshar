@@ -121,6 +121,19 @@ describe('Follows Testing', () => {
       "Not following, you're not authorized to see this user's followers"
     );
   });
+
+  it("Should fetch an user's follow list when proper credentials are given", async () => {
+    const rsponse = await request(app).post('/users/login').send({
+      username: 'testUser10',
+      password: 'testPassword',
+    });
+    const token = rsponse.body.token;
+    const id = Tokenizer.userIdFromToken(token);
+    const rsp2 = await request(app).get(`/follows/following?id=${id}`).set('x-access-token', token);
+    expect(rsp2.status).toBe(200);
+    expect(rsp2.body.follows.length).toBe(1);
+    expect(rsp2.body.follows[0].username).toBe('testUser20');
+  });
 });
 
 afterAll(async () => {});
