@@ -88,7 +88,6 @@ const getPostsLikedByUser = async (req, res) => {
 
 const getPostsSavedByUser = async (req, res) => {
   const token = req.headers['x-access-token'] || req.query.token || req.body.token;
-  const user_id = req.query.user_id || req.query.author;
   if (!token) {
     return res.status(401).json({
       message: 'Please provide a token',
@@ -100,12 +99,7 @@ const getPostsSavedByUser = async (req, res) => {
       message: 'Invalid token',
     });
   }
-  if (user_id !== requester_id) {
-    return res.status(401).json({
-      message: "You are not authorized to view this user's saved posts",
-    });
-  }
-  const user = await User.findById(user_id);
+  const user = await User.findById(requester_id);
   if (!user) {
     return res.status(404).json({
       message: 'User not found',
