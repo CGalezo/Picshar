@@ -4,13 +4,14 @@ const User = require('../models/users.model');
 const Post = require('../models/posts.model');
 const Tokenizer = require('../utils/token.util');
 const request = require('supertest');
-const { connectDB, disconnectDB } = require('../configs/db.config');
+const { connectDB, disconnectDB, drop_all } = require('../configs/db.config');
 
 const app = new express();
 app.use(express.json());
 app.use('/users', UserRoutes);
 
 beforeAll(async () => {
+  jest.setTimeout(10000);
   await connectDB();
   const GLOBAL_TEST_USER = new User({
     username: 'testUser',
@@ -155,6 +156,4 @@ describe('User Profile testing', () => {
   });
 });
 
-afterAll(async () => {
-  await disconnectDB();
-});
+afterAll(async () => {});
