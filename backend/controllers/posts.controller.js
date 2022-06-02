@@ -200,20 +200,71 @@ const getPostById = async (req, res) => {
     });
   }
   const [img_url, bio, author] = [post.img_url, post.bio, post.author];
-  const likes = await User.find({liked_posts: { $in: [post_id] }},"username");
+  const likes = await User.find(
+    { liked_posts: { $in: [post_id] } },
+    "username"
+  );
   return res.status(200).json({
     message: "Post retrieved",
     img_url,
     bio,
     author,
     likes,
-    comment : post.comments,
+    comment: post.comments,
   });
 };
+
+const likePost = async (req, res) => {
+  const token =
+    req.headers["x-access-token"] || req.query.token || req.body.token;
+  const { post_id } = req.body;
+  if (!token) {
+    return res.status(401).json({
+      message: "Please provide a token",
+    });
+  }
+  const user_id = Tokenizer.userIdFromToken(token);
+  if (!user_id) {
+    return res.status(401).json({
+      message: "Invalid token",
+    });
+  }
+  const user = await User.findById(user_id);
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
+  const post = await Post.findById(post_id);
+  if (!post) {
+    return res.status(404).json({
+      message: "Post not found",
+    });
+  }
+  if (user.liked_posts.includes(post_id)) {
+    return res.status(401).json({
+      message: "You have already liked this post",
+    });
+  }
+  user.liked_posts.push(post_id);
+  user.save((err, user) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Error liking post",
+      });
+    }
+    return res.status(200).json({
+      message: "Post liked",
+      user,
+    });
+  });
+};
+
 module.exports = {
   getPostsByUser,
   createNewPost,
   getPostsLikedByUser,
   getPostsSavedByUser,
   getPostById,
+  likePost,
 };

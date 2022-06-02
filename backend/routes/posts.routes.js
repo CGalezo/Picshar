@@ -10,5 +10,7 @@ router.post('/', controller.createNewPost);
 router.get('/liked-by', controller.getPostsLikedByUser);
 router.get('/saved-by', controller.getPostsSavedByUser);
 
+router.post('/like', controller.likePost);
+
 
 module.exports = router;
