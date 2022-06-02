@@ -6,7 +6,7 @@ const Post = require('../models/posts.model');
 const Comment = require('../models/comments.model');
 const FollowRequest = require('../models/followRequest.model');
 
-dotenv.config();
+dotenv.config({ path: `.env${process.env.NODE_ENV === 'test' ? '.test' : ''}` });
 connectDB()
   .then(async () => {
     // create likes

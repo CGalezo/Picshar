@@ -4,7 +4,7 @@ const { connectDB, disconnectDB } = require('../configs/db.config');
 const User = require('../models/users.model');
 const Post = require('../models/posts.model');
 
-dotenv.config();
+dotenv.config({ path: `.env${process.env.NODE_ENV === 'test' ? '.test' : ''}` });
 connectDB()
   .then(async () => {
     try {
