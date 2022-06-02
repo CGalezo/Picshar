@@ -13,5 +13,7 @@ router.get('/saved-by', controller.getPostsSavedByUser);
 router.post('/like', controller.likePost);
 router.post('/save', controller.savePost);
 
+router.post('/comment', controller.commentPost);
+
 
 module.exports = router;
