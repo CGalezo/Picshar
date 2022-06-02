@@ -27,6 +27,17 @@ const createFollowRequest = async (req, res) => {
       message: 'You cannot follow yourself, you dumb bastard',
     });
   }
+  const user = await User.findById(user_id);
+  if (!user) {
+    return res.status(404).json({
+      message: 'User not found',
+    });
+  }
+  if (user.followers.includes(requester_id)) {
+    return res.status(401).json({
+      message: 'You are already following this user',
+    });
+  }
   const followRequest = await FollowRequest.findOne({
     requester: requester_id,
     requestee: user_id,
