@@ -7,4 +7,5 @@ module.exports = {
   testEnvironment: 'node',
   coveragePathIgnorePatterns: ['/node_modules/'],
   roots: ['../tests'],
+  testTimeout: 10000,
 };
