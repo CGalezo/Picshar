@@ -16,5 +16,6 @@ router.post('/save', controller.savePost);
 router.post('/comment', controller.commentPost);
 router.get('/timeline', controller.getTimeline);
 
+router.get('/comment', controller.getCommentsPost);
 
 module.exports = router;
