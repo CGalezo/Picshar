@@ -81,7 +81,7 @@ describe('Like Post Testing', () => {
     });
 });
 
-describe('Liked Posts of User Testing', () => {
+describe('Liked Posts of an User Testing', () => {
     it("Should fetch an user's liked posts when proper credentials are given", async () => {
         // login as testUser2
         const response = await request(app).post('/users/login').send({
@@ -137,6 +137,20 @@ describe('Save Post Testing', () => {
         });
         expect(response2.status).toBe(200);
         expect(response2.body.message).toBe('Post saved');
+    });
+});
+
+describe('Saved Posts of an User Testing', () => {
+    it("Should fetch an user's saved posts when itself access", async () => {
+        // login as testUser
+        const response = await request(app).post('/users/login').send({
+            username: 'testUser',
+            password: 'testPassword',
+        });
+        const token = response.body.token;
+        const response2 = await request(app).get(`/posts/saved-by`).set('x-access-token', token);
+        expect(response2.status).toBe(200);
+        expect(response2.body.message).toBe("Saved Posts retrieved");
     });
 });
 
