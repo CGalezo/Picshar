@@ -3,6 +3,7 @@ const UserRoutes = require('../routes/users.routes');
 const PostRoutes = require('../routes/posts.routes');
 const User = require('../models/users.model');
 const Post = require('../models/posts.model');
+const Comment = require('../models/comments.model');
 const Tokenizer = require('../utils/token.util');
 const request = require('supertest');
 const { connectDB, disconnectDB } = require('../configs/db.config');
@@ -151,6 +152,37 @@ describe('Saved Posts of an User Testing', () => {
         const response2 = await request(app).get(`/posts/saved-by`).set('x-access-token', token);
         expect(response2.status).toBe(200);
         expect(response2.body.message).toBe("Saved Posts retrieved");
+    });
+});
+
+describe('Comment Post Testing', () => {
+    it("Should successfully create a comment in a post", async () => {
+        // New post
+        const post6 = new Post({
+            img_url: 'test url',
+            bio: 'test post bio',
+            author: GLOBAL_TEST_USER._id,
+        });
+        await post6.save();
+        // New comment
+        const comment1 = new Comment({
+            post: post6._id,
+            content: 'Existen tantos idiomas y tú decides hablar la verdad',
+            author: GLOBAL_TEST_USER._id,
+        });
+        await comment1.save();
+        // login as testUser
+        const response = await request(app).post('/users/login').send({
+            username: 'testUser',
+            password: 'testPassword',
+        });
+        const token = response.body.token;
+        const response2 = await request(app).post(`/posts/comment`).set('x-access-token', token).send({
+            post_id: post6._id,
+            comment: comment1.content,
+        });
+        expect(response2.status).toBe(200);
+        expect(response2.body.message).toBe('Comment posted');
     });
 });
 
