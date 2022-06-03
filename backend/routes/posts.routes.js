@@ -15,5 +15,6 @@ router.post('/save', controller.savePost);
 
 router.post('/comment', controller.commentPost);
 
+router.get('/comment', controller.getCommentsPost);
 
 module.exports = router;

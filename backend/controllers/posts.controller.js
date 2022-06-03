@@ -171,6 +171,35 @@ const getPostsSavedByUser = async (req, res) => {
   });
 };
 
+
+const getCommentsPost = async (req, res) => {
+  const token =
+    req.headers["x-access-token"] || req.query.token || req.body.token;
+  if (!token) {
+    return res.status(401).json({
+      message: "Please provide a token",
+    });
+  }
+  const requester_id = Tokenizer.userIdFromToken(token);
+  if (!requester_id) {
+    return res.status(401).json({
+      message: "Invalid token",
+    });
+  }
+  const { post_id } = req.body;
+  const commets = await Comment.find(post_id);
+  if (!commets) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }else{
+    return res.status(200).json({
+      message: "Post's comments retrieved",
+      commets,
+    });
+  }
+};
+
 const getPostById = async (req, res) => {
   const token =
     req.headers["x-access-token"] || req.query.token || req.body.token;
@@ -353,4 +382,5 @@ module.exports = {
   commentPost,
   likePost,
   savePost,
+  getCommentsPost
 };

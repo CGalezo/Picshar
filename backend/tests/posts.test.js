@@ -186,4 +186,18 @@ describe('Comment Post Testing', () => {
     });
 });
 
+describe('Comments of a Post Testing', () => {
+    it("Should fetch an past's comments", async () => {
+        // login as testUser
+        const response = await request(app).post('/users/login').send({
+            username: 'testUser',
+            password: 'testPassword',
+        });
+        const token = response.body.token;
+        const response2 = await request(app).get(`/posts/comment`).set('x-access-token', token);
+        expect(response2.status).toBe(200);
+        expect(response2.body.message).toBe("Post's comments retrieved");
+    });
+});
+
 afterEach(async () => {});
