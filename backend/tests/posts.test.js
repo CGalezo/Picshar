@@ -28,6 +28,7 @@ beforeAll(async () => {
       birthdate: new Date(),
       bio: 'test bio',
       email: 'testmail2@gmail.com',
+      public_likes: false,
     });
     const post1 = new Post({
       img_url: 'test url',
@@ -50,13 +51,10 @@ beforeAll(async () => {
   
     //User 1 likes post 3
     GLOBAL_TEST_USER.liked_posts.push(post3);
-  
-    // make users follow eachother
-    GLOBAL_TEST_USER.follows.push(GLOBAL_TEST_USER_2._id);
-    GLOBAL_TEST_USER.followers.push(GLOBAL_TEST_USER_2._id);
-    GLOBAL_TEST_USER_2.follows.push(GLOBAL_TEST_USER._id);
-    GLOBAL_TEST_USER_2.followers.push(GLOBAL_TEST_USER._id);
-  
+    
+    //User 2 likes post 1
+    GLOBAL_TEST_USER_2.liked_posts.push(post1);
+
     Promise.all([GLOBAL_TEST_USER.save(), GLOBAL_TEST_USER_2.save(), post1.save(), post2.save()]);
 });
 
@@ -79,6 +77,39 @@ describe('Like Post Testing', () => {
         });
         expect(response2.status).toBe(200);
         expect(response2.body.message).toBe('Post liked');
+    });
+});
+
+describe('Liked Posts of User Testing', () => {
+    it("Should fetch an user's liked posts when proper credentials are given", async () => {
+        const response = await request(app).post('/users/login').send({
+            username: 'testUser2',
+            password: 'testPassword',
+        });
+        const token = response.body.token;
+        const id = Tokenizer.userIdFromToken(token);
+        const response2 = await request(app).get(`/posts/liked-by?user_id=${id}`).set('x-access-token', token);
+        expect(response2.status).toBe(200);
+        expect(response2.body.message).toBe("Liked Posts retrieved");
+        expect(response2.body.posts.length).toBe(1);
+        expect(response2.body.posts[0].img_url).toBe('test url');
+        expect(response2.body.posts[0].bio).toBe('test post bio');
+    });
+
+    it("Should fail when liked posts are not public and another user try to watch them", async () => {
+        const response1 = await request(app).post('/users/login').send({
+            username: 'testUser',
+            password: 'testPassword',
+        });
+        const token = response1.body.token;
+        const response2 = await request(app).post('/users/login').send({
+            username: 'testUser2',
+            password: 'testPassword',
+        });
+        const id = Tokenizer.userIdFromToken(response2.body.token);
+        const response3 = await request(app).get(`/posts/liked-by?user_id=${id}`).set('x-access-token', token);
+        expect(response3.status).toBe(401);
+        expect(response3.body.message).toBe("You are not authorized to view this user's liked posts");
     });
 });
 
