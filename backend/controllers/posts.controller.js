@@ -344,6 +344,41 @@ const commentPost = async (req, res) => {
   });
 };
 
+const getTimeline = async (req, res) => {
+  const token =
+    req.headers["x-access-token"] || req.query.token || req.body.token;
+  if (!token) {
+    return res.status(401).json({
+      message: "Please provide a token",
+    });
+  }
+  const user_id = Tokenizer.userIdFromToken(token);
+  if (!user_id) {
+    return res.status(401).json({
+      message: "Invalid token",
+    });
+  }
+  const user = await User.findById(user_id);
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
+  const page = req.body.page || 1;
+  let liked_posts = user.liked_posts;
+  console.log(liked_posts)
+  liked_posts = liked_posts.orderBy("createdAt", "desc");
+  liked_posts = liked_posts.slice(
+    (page - 1) * 10,
+    page * 10 > liked_posts.length ? liked_posts.length : page * 10
+  );
+  const posts = await Post.find({ _id: { $in: liked_posts } });
+  return res.status(200).json({
+    message: "Posts retrieved",
+    posts,
+  });
+};
+
 module.exports = {
   getPostsByUser,
   createNewPost,
@@ -353,4 +388,5 @@ module.exports = {
   commentPost,
   likePost,
   savePost,
+  getTimeline,
 };
