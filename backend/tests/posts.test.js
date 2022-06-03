@@ -28,6 +28,7 @@ beforeAll(async () => {
       birthdate: new Date(),
       bio: 'test bio',
       email: 'testmail2@gmail.com',
+      // Private liked posts
       public_likes: false,
     });
     const post1 = new Post({
@@ -82,6 +83,7 @@ describe('Like Post Testing', () => {
 
 describe('Liked Posts of User Testing', () => {
     it("Should fetch an user's liked posts when proper credentials are given", async () => {
+        // login as testUser2
         const response = await request(app).post('/users/login').send({
             username: 'testUser2',
             password: 'testPassword',
@@ -97,11 +99,13 @@ describe('Liked Posts of User Testing', () => {
     });
 
     it("Should fail when liked posts are not public and another user try to watch them", async () => {
+        // login as testUser
         const response1 = await request(app).post('/users/login').send({
             username: 'testUser',
             password: 'testPassword',
         });
         const token = response1.body.token;
+        // login as testUser2
         const response2 = await request(app).post('/users/login').send({
             username: 'testUser2',
             password: 'testPassword',
@@ -110,6 +114,29 @@ describe('Liked Posts of User Testing', () => {
         const response3 = await request(app).get(`/posts/liked-by?user_id=${id}`).set('x-access-token', token);
         expect(response3.status).toBe(401);
         expect(response3.body.message).toBe("You are not authorized to view this user's liked posts");
+    });
+});
+
+describe('Save Post Testing', () => {
+    it("Should properly add the saved post to user", async () => {
+        // New post
+        const post5 = new Post({
+            img_url: 'test url',
+            bio: 'test post bio',
+            author: GLOBAL_TEST_USER._id,
+        });
+        await post5.save();
+        // login as testUser
+        const response = await request(app).post('/users/login').send({
+            username: 'testUser',
+            password: 'testPassword',
+        });
+        const token = response.body.token;
+        const response2 = await request(app).post(`/posts/save`).set('x-access-token', token).send({
+            post_id: post5._id,
+        });
+        expect(response2.status).toBe(200);
+        expect(response2.body.message).toBe('Post saved');
     });
 });
 
