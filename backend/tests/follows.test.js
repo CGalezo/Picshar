@@ -214,6 +214,36 @@ describe('Follow Request handling Testing', () => {
     expect(rsp3.status).toBe(200);
     expect(rsp3.body.message).toBe('Follow request accepted');
   });
+
+  it('Should successfully rejected a follow request', async () => {
+    const GLOBAL_TEST_USER_5 = new User({
+      username: 'testUser40',
+      password: 'testPassword',
+      birthdate: new Date(),
+      bio: 'test bio 40',
+      email: 'testmail40@gmail.com',
+    });
+    await GLOBAL_TEST_USER_5.save();
+
+    const rsponse = await request(app).post('/users/login').send({
+      username: 'testUser10',
+      password: 'testPassword',
+    });
+    const token = rsponse.body.token;
+    const id = Tokenizer.userIdFromToken(rsponse.body.token);
+    const fr = new FollowRequest({
+      requester: GLOBAL_TEST_USER_5._id,
+      requestee: id,
+    });
+    await fr.save();
+    const rsp3 = await request(app).post(`/follows/response`).set('x-access-token', token).send({
+      request_id: fr._id.toString(),
+      action: 'reject',
+    });
+    expect(rsp3.status).toBe(200);
+    expect(rsp3.body.message).toBe('Follow request rejected');
+  });
+
 });
 
 afterEach(async () => {});
